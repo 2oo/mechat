@@ -1,0 +1,23 @@
+{
+  "name": "webrtc-app",
+  "version": "0.0.1",
+  "description": "基于webrtc的应用",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2oo/webrtc-app.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/2oo/webrtc-app/issues"
+  },
+  "homepage": "https://github.com/2oo/webrtc-app#readme",
+  "dependencies": {
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
+  }
+}
