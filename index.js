@@ -1,7 +1,7 @@
 const express = require('express')
-,         app = express()
-,      server = require('http').createServer(app)
-,          io = require('socket.io')(server)
+  ,   app     = express()
+  ,   server  = require('http').createServer(app)
+  ,   io      = require('socket.io')(server)
 
 let users = {}
 

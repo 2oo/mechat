@@ -3,7 +3,16 @@
   <head>
     <meta charset="utf-8">
     <title>WebRTC app</title>
+    <style>
+      .chat #msg {
+        max-width: 960px;
+        width: 100%;
+        height: 80px;
+      }
+
+    </style>
   </head>
+
   <body>
     <h1>Hello WebRTC!</h1>
     <p>ID: <span id="local-id"></span></p>
@@ -17,6 +26,12 @@
     <div>
       <video id="local" autoplay></video>
       <video id="remote" autoplay></video>
+    </div>
+
+    <div class="chat">
+      <div id="received"></div>
+      <textarea id="msg" disabled></textarea>
+      <button id="send" disabled>发送</button>
     </div>
 
     <script src="./adapter.js"></script>

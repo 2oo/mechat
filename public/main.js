@@ -1,41 +1,32 @@
 const socket          = io()
-,     localVideo      = document.getElementById('local')
-,     remoteVideo     = document.getElementById('remote')
-,     localIdElement  = document.getElementById('local-id')
-,     remoteIdInput   = document.getElementById('remote-id')
-,     callButton      = document.getElementById('call')
-,     hangUpButton    = document.getElementById('hang-up')
+  ,   localVideo      = document.getElementById('local')
+  ,   remoteVideo     = document.getElementById('remote')
+  ,   localIdElement  = document.getElementById('local-id')
+  ,   remoteIdInput   = document.getElementById('remote-id')
+  ,   callButton      = document.getElementById('call')
+  ,   hangUpButton    = document.getElementById('hang-up')
+  ,   receivedMsg     = document.getElementById('received')
+  ,   msgTextarea     = document.getElementById('msg')
+  ,   sendButton      = document.getElementById('send')
+  ,   connectedMsg    = '连接成功 双方可以进行通话了'
 
-let peerConnection = callerId = calledId = null
+let peerConnection
+  = callerId
+  = calledId
+  = dataChannel
+  = localStream
+  = null
 
 
-function setupPeerConnection() {
-  navigator.mediaDevices.getUserMedia({video: true, audio: true})
-  .then(stream => {
-    localVideo.srcObject = stream
+navigator.mediaDevices.getUserMedia({video: true, audio: false})
+.then(stream => {
+  localVideo.srcObject = stream
+  localStream = stream
+  setupPeerConnection(stream)
+})
+.catch(e => alert('木有找到摄像头君 or 浏览器君不资瓷WebRTC'))
 
-    peerConnection = new RTCPeerConnection()
-    // 接通
-    peerConnection.ontrack = e => {
-      remoteVideo.srcObject = e.streams[0]
-      remoteIdInput.disabled = callButton.disabled = true
-      hangUpButton.disabled = false
-    }
-
-    // ICE
-    peerConnection.onicecandidate = e => {
-      if (e.candidate) {
-        socket.emit('candidate', e.candidate, callerId || calledId)
-      }
-    }
-
-    stream.getTracks().forEach(track => {
-      peerConnection.addTrack(track, stream)
-    })
-  })
-  .catch(e => alert('木有找到摄像头君 or 浏览器君不资瓷WebRTC'))
-}
-
+// Button Event
 callButton.onclick = e => {
   calledId = remoteIdInput.value.toLowerCase()
   if (calledId === socket.id.toLowerCase()) {
@@ -43,12 +34,32 @@ callButton.onclick = e => {
     return
   }
   socket.emit('call', calledId)
+
+  dataChannel = peerConnection.createDataChannel('chat', {ordered: true})
+  dataChannel.onopen = e => {
+    appendContent(connectedMsg)
+    msgTextarea.disabled
+      = sendButton.disabled
+      = false
+  }
+  dataChannel.onmessage = e => {
+    appendContent(e.data)
+  }
 }
 
 hangUpButton.onclick = e => {
   socket.emit('leave', callerId || calledId )
   onLeave()
 }
+
+sendButton.onclick = e => {
+  if (dataChannel) {
+    appendContent(msgTextarea.value)
+    dataChannel.send(msgTextarea.value)
+    msgTextarea.value = ''
+  }
+}
+
 
 socket.on('connect', () => {
   localIdElement.textContent = socket.id.toLowerCase()
@@ -78,6 +89,7 @@ socket.on('receiveOffer', (offer, id) => {
   })
 })
 
+// 收到answer 与对方连接成功
 socket.on('receiveAnswer', answer => {
   peerConnection.setRemoteDescription(new RTCSessionDescription(answer))
   console.log('收到回应');
@@ -95,11 +107,47 @@ function onLeave() {
   callerId
     = calledId
     = remoteVideo.srcObject
-    = peerConnection.onicecandidate
     = null
-  setupPeerConnection()
+  setupPeerConnection(localStream)
   hangUpButton.disabled = true
   callButton.disabled = remoteIdInput.disabled = false
 }
 
-setupPeerConnection()
+function setupPeerConnection(stream) {
+  peerConnection = new RTCPeerConnection()
+
+  // ICE
+  peerConnection.onicecandidate = e => {
+    if (e.candidate) {
+      socket.emit('candidate', e.candidate, callerId || calledId)
+    }
+  }
+
+  // 设置对方的媒体流
+  peerConnection.ontrack = e => {
+    remoteVideo.srcObject = e.streams[0]
+    remoteIdInput.disabled = callButton.disabled = true
+    hangUpButton.disabled = false
+  }
+
+  peerConnection.ondatachannel = e => {
+    appendContent(connectedMsg)
+    dataChannel = e.channel
+    dataChannel.onmessage = e => {
+      appendContent(e.data)
+    }
+    msgTextarea.disabled
+      = sendButton.disabled
+      = false
+  }
+
+  stream.getTracks().forEach(track => {
+    peerConnection.addTrack(track, stream)
+  })
+}
+
+function appendContent(content) {
+  const pElement = document.createElement('p')
+  pElement.textContent = content
+  receivedMsg.appendChild(pElement)
+}
