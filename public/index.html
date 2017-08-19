@@ -1,41 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
-    <title>WebRTC app</title>
-    <style>
-      .chat #msg {
-        max-width: 960px;
-        width: 100%;
-        height: 80px;
-      }
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>MeChat - 打开浏览器就能使用的视频、文字聊天应用</title>
+    <link href="https://cdn.bootcss.com/normalize/7.0.0/normalize.min.css" rel="stylesheet">
+    <link href="./css/index.css" rel="stylesheet">
   </head>
 
   <body>
-    <h1>Hello WebRTC!</h1>
-    <p>ID: <span id="local-id"></span></p>
+    <div class='content'>
+    <img src="./img/phone.png" />
 
-    <div>
-      <input id="remote-id" type="text">
-      <button id="call">呼叫</button>
-      <button id="hang-up" disabled>挂断</button>
-    </div>
-
-    <div>
-      <video id="local" autoplay></video>
-      <video id="remote" autoplay></video>
-    </div>
-
-    <div class="chat">
-      <div id="received"></div>
-      <textarea id="msg" disabled></textarea>
-      <button id="send" disabled>发送</button>
-    </div>
-
-    <script src="./adapter.js"></script>
-    <script src="./socket.io/socket.io.js"></script>
-    <script src="./main.js"></script>
+    <main>
+      <div class='logo'></div>
+      <p class='slogan'>
+        打开浏览器就能用的视频、文字聊天应用
+      </p>
+      <a href="./app.html">即刻开始</a>
+    </main>
+  </div>
   </body>
 </html>

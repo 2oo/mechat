@@ -1,7 +1,7 @@
 {
-  "name": "webrtc-app",
+  "name": "mechat",
   "version": "0.0.1",
-  "description": "基于webrtc的应用",
+  "description": "打开浏览器就能用的视频、文字聊天应用",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/2oo/webrtc-app.git"
+    "url": "git+https://github.com/2oo/mechat.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/2oo/webrtc-app/issues"
+    "url": "https://github.com/2oo/mechat/issues"
   },
-  "homepage": "https://github.com/2oo/webrtc-app#readme",
+  "homepage": "https://github.com/2oo/mechat#readme",
   "dependencies": {
     "express": "^4.15.4",
     "socket.io": "^2.0.3"
