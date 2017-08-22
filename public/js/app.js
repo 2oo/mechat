@@ -1,6 +1,7 @@
 const socket          = io()
-  ,   localVideo      = document.getElementById('local')
-  ,   remoteVideo     = document.getElementById('remote')
+  ,   video           = document.querySelector('video')
+  ,   infoArea        = document.querySelector('.info')
+  ,   chatArea        = document.querySelector('.chat')
   ,   localIdElement  = document.getElementById('local-id')
   ,   remoteIdInput   = document.getElementById('remote-id')
   ,   callButton      = document.getElementById('call')
@@ -20,7 +21,7 @@ let peerConnection
 
 navigator.mediaDevices.getUserMedia({video: true, audio: false})
 .then(stream => {
-  localVideo.srcObject = stream
+  video.srcObject = stream
   localStream = stream
   setupPeerConnection(stream)
 })
@@ -104,13 +105,15 @@ socket.on('leave', onLeave)
 
 function onLeave() {
   peerConnection.close()
+  video.srcObject = localStream
   callerId
     = calledId
-    = remoteVideo.srcObject
     = null
   setupPeerConnection(localStream)
   hangUpButton.disabled = true
   callButton.disabled = remoteIdInput.disabled = false
+  infoArea.style.display = 'block'
+  chatArea.style.display = 'none'
 }
 
 function setupPeerConnection(stream) {
@@ -125,9 +128,11 @@ function setupPeerConnection(stream) {
 
   // 设置对方的媒体流
   peerConnection.ontrack = e => {
-    remoteVideo.srcObject = e.streams[0]
+    video.srcObject = e.streams[0]
     remoteIdInput.disabled = callButton.disabled = true
     hangUpButton.disabled = false
+    infoArea.style.display = 'none'
+    chatArea.style.display = 'block'
   }
 
   peerConnection.ondatachannel = e => {
